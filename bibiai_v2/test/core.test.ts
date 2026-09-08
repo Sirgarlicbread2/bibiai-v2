@@ -21,6 +21,7 @@ async function fixture(){
 }
 afterEach(async()=>{vi.restoreAllMocks();for(const p of paths.splice(0))await rm(p,{recursive:true,force:true});});
 describe('fresh, bounded NAS memory',()=>{
+  it('uses low-latency defaults for ordinary chat',()=>{const cfg=new Configuration();expect(cfg.value.ai).toMatchObject({model:'gemini-3.5-flash-lite',maxContextChars:4000,responseTokens:500});});
   it('starts empty and does not import v1 files',async()=>{const f=await fixture();await writeFile(join(f.cfg.value.memory.mountPath,'bibiai-memory.json'),'old');expect(await f.disk.rows('fact')).toEqual([]);});
   it('deduplicates durable facts and preserves them across a restart',async()=>{const f=await fixture();await f.memory.fact('The rail station is copper.',['person']);await f.memory.fact('The rail station is copper.',['person']);expect(f.disk.stats().counts.fact).toBe(1);const fresh=new Storage(f.cfg);await fresh.localInit();await fresh.connect();expect((await fresh.rows('fact'))[0].data.text).toContain('copper');});
   it('caps recent record count and never saves media blobs',async()=>{const f=await fixture();for(let i=0;i<30;i++)await f.memory.recent(`message ${i}`,'answer',['person']);expect(f.disk.stats().counts.recent).toBe(20);expect(f.disk.stats().bytes).toBeLessThan(12000);});
@@ -34,6 +35,7 @@ describe('fresh, bounded NAS memory',()=>{
   it('keeps simultaneous exclusions durable',async()=>{const f=await fixture();await Promise.all(['alice','bob','carol'].map(id=>f.disk.forget(id)));const fresh=new Storage(f.cfg);await fresh.localInit();for(const id of ['alice','bob','carol'])expect(fresh.blocked(id)).toBe(true);});
   it('erases grudges derived from mentions without confusing the owner',async()=>{const f=await fixture();await f.memory.grudge('alice','Alice','insult involving Bob',['bob']);await f.memory.grudge('bob','Bob','separate insult');expect((await f.disk.rows('grudge')).map(r=>r.data.count)).toEqual([1,1]);await f.disk.forget('bob');expect(await f.disk.rows('grudge')).toEqual([]);});
   it('keeps Home Assistant memory out of Discord context',async()=>{const f=await fixture();await f.memory.fact('Alarm action is private',['ha:owner'],'home');await f.memory.fact('Minecraft rail is copper',['person'],'discord');const context=await f.memory.context('private alarm copper','person','','discord');expect(context.text).not.toContain('Alarm');expect(context.text).toContain('copper');});
+  it('bounds SMB fact reads during context retrieval',async()=>{const f=await fixture();f.cfg.value.memory.factsLimit=200;for(let i=0;i<120;i++)await f.memory.fact(`Fact ${i}`,['person'],'discord');const read=vi.spyOn(f.disk as any,'readPath');await f.memory.context('fact','person','','discord');expect(read).toHaveBeenCalledTimes(96);});
 });
 describe('permission boundaries',()=>{
   it.each(['op bob','give bob diamond 64','execute as @a run op bob','save-all\nstop','say hi;op bob','fill 0 0 0 1 1 1 air'])('blocks unsafe RCON: %s',command=>{expect(commandPolicy(command,true).risk).toBe('blocked');});

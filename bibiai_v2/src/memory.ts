@@ -18,12 +18,13 @@ export class Memory {
   }
   async context(query: string, subject: string, channel = '', source = 'discord') {
     if (!this.disk.ready || !this.cfg.value.memory.enabled) return { text: '', subjects: [subject] };
-    const recent = await this.disk.rows('recent', 8, r => r.data.source === source && (r.subjects.includes(subject) || Boolean(channel && r.data.channel === channel)));
+    const recent = await this.disk.rows('recent', 8, r => r.data.source === source && (r.subjects.includes(subject) || Boolean(channel && r.data.channel === channel)), 48);
     const tokens = new Set(query.toLowerCase().split(/\W+/).filter(t => t.length > 2));
-    const facts = await this.disk.rows('fact', 2000, r => r.data.source === undefined || r.data.source === source);
+    // A small bounded sample prevents hundreds of SMB file reads before every reply.
+    const facts = await this.disk.rows('fact', 96, r => r.data.source === undefined || r.data.source === source, 96);
     const ranked = facts.map(r => ({ row:r, score:(r.subjects.includes(subject) ? 3 : 0) + [...tokens].filter(t => String(r.data.text).toLowerCase().includes(t)).length }))
       .filter(x => x.score > 0 || !x.row.subjects.length).sort((a,b) => b.score-a.score).slice(0,12).map(x => x.row);
-    const grudges = await this.disk.rows('grudge', 1, r => r.subjects[0] === subject);
+    const grudges = await this.disk.rows('grudge', 1, r => r.subjects[0] === subject, 64);
     const rows = [...ranked,...recent,...grudges];
     // Provenance follows all source rows, including rows truncated from the prompt.
     return { text: rows.map(r => `[${r.kind}] ${JSON.stringify(r.data)}`).join('\n').slice(0,this.cfg.value.ai.maxContextChars), subjects:[...new Set([subject,...rows.flatMap(r => r.subjects)])] };

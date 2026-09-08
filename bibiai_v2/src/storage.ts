@@ -133,11 +133,13 @@ export class Storage {
       return row;
     });
   }
-  async rows(kind: RecordKind, limit = 100, predicate?: (r: Row) => boolean): Promise<Row[]> {
+  async rows(kind: RecordKind, limit = 100, predicate?: (r: Row) => boolean, scanLimit = 2000): Promise<Row[]> {
     await this.available();
     const rows: Row[] = [];
     const candidates = [...this.index.entries()].filter(([, v]) => v.kind === kind && v.expires > Date.now()).sort((a, b) => b[1].at - a[1].at);
+    let scanned = 0;
     for (const [id] of candidates) {
+      if (scanned++ >= Math.min(scanLimit, 2000)) break;
       try {
         const row = await this.readPath(this.path(kind, id));
         if (this.allowed(row.subjects) && (!predicate || predicate(row))) rows.push(row);

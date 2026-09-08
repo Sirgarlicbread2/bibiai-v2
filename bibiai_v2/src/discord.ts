@@ -168,8 +168,14 @@ export class Discord {
       if(!this.consume(member.id))return;
       if(/how.*join|what.*ip|where.*modpack/i.test(text)){await this.sendReply(message,{text:this.joinText(),subjects:[member.id],commands:[]});return;}
       if(this.cfg.value.vacation.enabled&&/where.*ben|who.*charge|what.*rules/i.test(text)){await this.sendReply(message,{text:this.vacationText(),subjects:[member.id],commands:[]});return;}
-      const media=await this.media([...message.attachments.values()]);
-      await this.sendReply(message,await this.ai.chat(text.replace(/<@!?\d+>/g,'').trim()||'Describe the attached media.',actor,media));
+      // Discord's typing indicator makes the cloud-model wait visible without retaining more data.
+      const showTyping=()=>{const pending=(message.channel as {sendTyping?:()=>Promise<unknown>}).sendTyping?.();void pending?.catch(()=>{});};
+      const typing=setInterval(showTyping,7000);
+      try{
+        showTyping();
+        const media=await this.media([...message.attachments.values()]);
+        await this.sendReply(message,await this.ai.chat(text.replace(/<@!?\d+>/g,'').trim()||'Describe the attached media.',actor,media));
+      }finally{clearInterval(typing);}
     }catch(e){if(await this.privacy.member(message.guild,message.author.id)&&message.mentions.has(this.client?.user!))await message.reply({content:cleanError(e),allowedMentions:{parse:[],repliedUser:false}}).catch(()=>{});}
     finally{this.processing--;}
   }
