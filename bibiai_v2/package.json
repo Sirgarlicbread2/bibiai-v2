@@ -1,0 +1,30 @@
+{
+  "name": "bibiai-v2",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "description": "BibiAI v2 Home Assistant add-on with bounded NAS memory, privacy controls, roles, and web administration.",
+  "scripts": {
+    "dev": "tsx src/index.ts",
+    "build": "node --check public/app.js && tsc -p tsconfig.json",
+    "start": "node dist/src/index.js",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@discordjs/voice": "^0.19.2",
+    "discord.js": "^14.26.4",
+    "opusscript": "^0.0.8",
+    "rcon-client": "^4.2.5",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.3",
+    "tsx": "^4.22.4",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.9"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

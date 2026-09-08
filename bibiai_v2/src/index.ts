@@ -1,0 +1,15 @@
+import { mkdir } from 'node:fs/promises';
+import { Configuration } from './config.js';
+import { Runtime } from './runtime.js';
+import { makeServer } from './server.js';
+const cfg=new Configuration();await cfg.load();
+if(cfg.demo)await mkdir(cfg.value.memory.mountPath,{recursive:true});
+const runtime=new Runtime(cfg);await runtime.init();
+if(cfg.demo&&!runtime.disk.ready)await runtime.disk.initialize();
+const server=makeServer(runtime),api=makeServer(runtime,true);
+const host=cfg.demo?'127.0.0.1':'0.0.0.0';
+server.listen(Number(process.env.BIBI_PORT||8099),host,()=>console.log('BibiAI v2 dashboard ready.'));
+api.listen(Number(process.env.BIBI_API_PORT||8100),host);
+let closing=false;
+const close=()=>{if(closing)return;closing=true;runtime.close();server.close();api.close();setTimeout(()=>process.exit(0),1000).unref();};
+process.on('SIGINT',close);process.on('SIGTERM',close);

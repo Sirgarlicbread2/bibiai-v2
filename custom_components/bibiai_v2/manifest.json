@@ -1,0 +1,10 @@
+{
+  "domain": "bibiai_v2",
+  "name": "BibiAI v2",
+  "version": "2.0.0",
+  "config_flow": true,
+  "documentation": "https://github.com/Sirgarlicbread2/bibiai-v2",
+  "codeowners": [],
+  "requirements": [],
+  "iot_class": "local_polling"
+}

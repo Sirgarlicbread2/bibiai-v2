@@ -1,0 +1,10 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>BibiAI · Control room</title><link rel="stylesheet" href="app.css"><script src="app.js" defer></script></head>
+<body>
+<div class="shell">
+  <aside><a class="brand" href="#overview"><span class="mark">B</span><span>BibiAI<small>THE SECOND ADMINISTRATION</small></span></a><nav id="nav" aria-label="Main navigation"></nav><div class="aside-bottom"><span class="dot" id="connection-dot"></span><span id="connection">Connecting</span><small>v2.0 · Home Assistant</small></div></aside>
+  <main><header><div><span class="eyebrow">HONDA FIT REPUBLIC</span><h1 id="title">Control room</h1></div><button id="refresh" class="secondary">Refresh</button></header><div id="notice" role="status"></div><div id="content" aria-live="polite"></div></main>
+</div>
+<dialog id="login"><form id="login-form"><span class="eyebrow">BIBIAI V2</span><h2>Open the control room</h2><p>Open this dashboard through Home Assistant, or enter your dashboard key for direct access.</p><label for="key">Dashboard key</label><input id="key" type="password" autocomplete="current-password" required minlength="24"><button type="submit">Connect</button><p id="login-error" role="alert"></p></form></dialog>
+<dialog id="confirm"><form method="dialog"><h2 id="confirm-title">Confirm action</h2><p id="confirm-text"></p><div class="actions"><button value="cancel" class="secondary">Cancel</button><button value="ok" class="danger">Confirm</button></div></form></dialog>
+</body></html>

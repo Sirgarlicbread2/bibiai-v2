@@ -1,0 +1,12 @@
+.DS_Store
+Thumbs.db
+.env
+.env.*
+node_modules/
+dist/
+coverage/
+*.log
+__pycache__/
+*.pyc
+settings-v2.json
+privacy-v2.json
