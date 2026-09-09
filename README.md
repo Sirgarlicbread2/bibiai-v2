@@ -1,6 +1,6 @@
 # BibiAI v2
 
-A fresh Home Assistant add-on with a web control room, compact NAS memory, Discord roles and privacy opt-out, Minecraft administration, voice, moderation, email appeals, and Home Assistant Assist.
+A fresh Home Assistant add-on with a web control room, compact NAS memory, Discord roles and privacy opt-out, Minecraft administration, voice, moderation, verified appeal-email conversations with editable decision standards, and Home Assistant Assist.
 
 **No 3D printer, fabrication, slicing, print queue, or print monitoring integration is included.**
 

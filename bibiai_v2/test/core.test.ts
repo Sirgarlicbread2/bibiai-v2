@@ -53,5 +53,6 @@ describe('AI privacy races',()=>{
 });
 describe('moderation and appeals',()=>{
   it('uses weekdays for appeal timing',()=>{expect(new Date(businessDeadline(Date.parse('2026-09-04T12:00:00Z'),1)).toISOString()).toBe('2026-09-07T12:00:00.000Z');expect(new Date(businessDeadline(Date.parse('2026-09-04T12:00:00Z'),5)).toISOString()).toBe('2026-09-11T12:00:00.000Z');});
+  it('starts with evidence-based appeal standards and human decisions',()=>{const cfg=new Configuration();expect(cfg.value.appeals.automaticDecision).toBe(false);expect(cfg.value.appeals.emailConversation).toBe(true);expect(cfg.value.appeals.decisionStandards).toContain('reliable evidence');});
   it('distinguishes rule signals and supports custom terms',()=>{expect(classify('hello')).toBeNull();expect(classify('spamming nsfw')?.severity).toBe(2);expect(classify('ddos')?.severity).toBe(3);expect(classify('custom banned phrase',['banned phrase'])?.severity).toBe(2);});
 });

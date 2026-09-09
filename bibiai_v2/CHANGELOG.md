@@ -12,3 +12,8 @@
 - Faster defaults: Gemini Flash-Lite, 4,000-character context, and 500 response tokens.
 - Bound SMB retrieval work to 48 recent rows, 96 fact rows, and 64 grudge rows per reply.
 - Show a Discord typing indicator during cloud-model requests.
+
+# 2.0.2
+
+- Add verified appeal-email conversations with bounded correspondence history.
+- Add editable, evidence-based decision standards and apply them to optional automatic appeal decisions.
