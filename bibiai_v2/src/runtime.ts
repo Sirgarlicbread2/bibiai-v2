@@ -64,6 +64,6 @@ export class Runtime {
     if(!sentNow)return;
     await this.disk.put('state',{type:`report-${type}`,key},[],24*30,sent?.id);
   }
-  status(){const m=process.memoryUsage();return{version:'2.0.3',uptimeSeconds:Math.floor((Date.now()-this.started)/1000),ramBytes:m.rss,heapBytes:m.heapUsed,aiBusy:this.ai.gate.busy,discord:this.discord?.status||'Disabled',storage:this.disk.stats(),lastError:this.lastError,demo:this.cfg.demo,secrets:this.cfg.secretStatus(),features:{discord:this.cfg.value.discord.enabled,home:this.cfg.value.home.enabled,email:this.cfg.value.appeals.emailEnabled,minecraft:this.cfg.value.minecraft.enabled}};}
+  status(){const m=process.memoryUsage();return{version:'2.0.4',uptimeSeconds:Math.floor((Date.now()-this.started)/1000),ramBytes:m.rss,heapBytes:m.heapUsed,aiBusy:this.ai.gate.busy,discord:this.discord?.status||'Disabled',storage:this.disk.stats(),lastError:this.lastError,demo:this.cfg.demo,secrets:this.cfg.secretStatus(),features:{discord:this.cfg.value.discord.enabled,home:this.cfg.value.home.enabled,email:this.cfg.value.appeals.emailEnabled,minecraft:this.cfg.value.minecraft.enabled}};}
   close(){if(this.timer)clearInterval(this.timer);this.discord?.stop();}
 }

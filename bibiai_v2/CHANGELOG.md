@@ -21,3 +21,7 @@
 # 2.0.3
 
 - Add revocable music knowledge and Google Search privileges, surfaced in Bibi's own instructions and dashboard settings.
+
+# 2.0.4
+
+- Add Bibi's editable music-taste baseline for recommendations and music conversations.
