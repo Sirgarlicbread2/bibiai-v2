@@ -11,6 +11,7 @@ import { hasPrivacyRole,Privacy } from '../src/privacy.js';
 import { businessDeadline } from '../src/appeals.js';
 import { classify } from '../src/moderation.js';
 import { AI } from '../src/ai.js';
+import { commands } from '../src/commands.js';
 const paths:string[]=[];
 async function fixture(){
   const dir=await mkdtemp(join(tmpdir(),'bibi-v2-test-'));paths.push(dir);
@@ -46,6 +47,7 @@ describe('permission boundaries',()=>{
   it('requires explicit opt-in even after the privacy role is removed',async()=>{const f=await fixture();f.cfg.value.discord.guildId='g';f.cfg.value.discord.privacyRole='p';await f.disk.forget('alice');const guild:any={id:'g',members:{fetch:async()=>({roles:{cache:new Map()}})}};expect(await new Privacy(f.cfg,f.disk).member(guild,'alice')).toBeNull();});
   it('requires configured channels and a privacy role to enable Discord',async()=>{const f=await fixture();const next=structuredClone(f.cfg.value);next.discord.enabled=true;await expect(f.cfg.save(next)).rejects.toThrow('privacy role');});
   it('contains no fabrication settings or keys',()=>{const cfg=new Configuration();expect('fabrication'in cfg.value).toBe(false);expect(Object.keys(cfg.secrets).some(k=>/fabrication|detector/.test(k))).toBe(false);});
+  it('provides operators a privacy restore command',()=>{const privacy=commands.find((command:any)=>command.name==='privacy') as any;expect(privacy.options.some((option:any)=>option.name==='restore'&&option.options[0].name==='user')).toBe(true);});
 });
 describe('AI privacy races',()=>{
   it('does not call the AI for an excluded actor',async()=>{const f=await fixture();const ai=new AI(f.cfg,f.memory,{} as any,{} as any);const generate=vi.spyOn(ai,'generate');await expect(ai.chat('hello',{id:'alice',source:'discord',operator:false,authorize:async()=>false})).rejects.toThrow('Privacy');expect(generate).not.toHaveBeenCalled();});

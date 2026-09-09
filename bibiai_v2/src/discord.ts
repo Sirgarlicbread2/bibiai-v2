@@ -264,7 +264,17 @@ export class Discord {
     const sub=i.options.getSubcommand();await i.deferReply({ephemeral:true});
     try{
       const member=await i.guild.members.fetch({user:i.user.id,force:true,cache:false});
-      if(sub==='optout'){
+      if(sub==='restore'){
+        if(!this.roles.operator(member))throw new Error('Operator permission is required.');
+        const target=await i.guild.members.fetch({user:i.options.getUser('user',true).id,force:true,cache:false});
+        const role=await i.guild.roles.fetch(roleId);
+        if(!role||role.managed||role.id===i.guild.id||role.permissions.bitfield!==0n)throw new Error('Invalid privacy role.');
+        if(target.roles.cache.has(roleId))await target.roles.remove(roleId,`Privacy mode restored by ${member.user.tag}`);
+        const fresh=await i.guild.members.fetch({user:target.id,force:true,cache:false});
+        if(fresh.roles.cache.has(roleId))throw new Error('The privacy role could not be removed. Check BibiAI role hierarchy.');
+        await this.disk.consent(target.id);
+        await i.editReply(`BibiAI processing was restored for ${target.user.tag}. Their previous BibiAI history remains deleted.`);
+      }else if(sub==='optout'){
         await this.forget(member.id);
         try{
           const role=await i.guild.roles.fetch(roleId);

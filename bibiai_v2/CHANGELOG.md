@@ -25,3 +25,7 @@
 # 2.0.4
 
 - Add Bibi's editable music-taste baseline for recommendations and music conversations.
+
+# 2.0.5
+
+- Add an operator-only privacy restore command to remove a member's privacy role and resume empty-history processing.
