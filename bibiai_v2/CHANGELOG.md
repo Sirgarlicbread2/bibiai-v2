@@ -17,3 +17,7 @@
 
 - Add verified appeal-email conversations with bounded correspondence history.
 - Add editable, evidence-based decision standards and apply them to optional automatic appeal decisions.
+
+# 2.0.3
+
+- Add revocable music knowledge and Google Search privileges, surfaced in Bibi's own instructions and dashboard settings.

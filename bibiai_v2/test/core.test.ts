@@ -22,6 +22,7 @@ async function fixture(){
 afterEach(async()=>{vi.restoreAllMocks();for(const p of paths.splice(0))await rm(p,{recursive:true,force:true});});
 describe('fresh, bounded NAS memory',()=>{
   it('uses low-latency defaults for ordinary chat',()=>{const cfg=new Configuration();expect(cfg.value.ai).toMatchObject({model:'gemini-3.5-flash-lite',maxContextChars:4000,responseTokens:500});});
+  it('grants revocable music and web privileges by default',()=>{const cfg=new Configuration();expect(cfg.value.privileges).toEqual({musicKnowledge:true,googleSearch:true});});
   it('starts empty and does not import v1 files',async()=>{const f=await fixture();await writeFile(join(f.cfg.value.memory.mountPath,'bibiai-memory.json'),'old');expect(await f.disk.rows('fact')).toEqual([]);});
   it('deduplicates durable facts and preserves them across a restart',async()=>{const f=await fixture();await f.memory.fact('The rail station is copper.',['person']);await f.memory.fact('The rail station is copper.',['person']);expect(f.disk.stats().counts.fact).toBe(1);const fresh=new Storage(f.cfg);await fresh.localInit();await fresh.connect();expect((await fresh.rows('fact'))[0].data.text).toContain('copper');});
   it('caps recent record count and never saves media blobs',async()=>{const f=await fixture();for(let i=0;i<30;i++)await f.memory.recent(`message ${i}`,'answer',['person']);expect(f.disk.stats().counts.recent).toBe(20);expect(f.disk.stats().bytes).toBeLessThan(12000);});
