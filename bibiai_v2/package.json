@@ -1,6 +1,6 @@
 {
   "name": "bibiai-v2",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "private": true,
   "type": "module",
   "description": "BibiAI v2 Home Assistant add-on with bounded NAS memory, privacy controls, roles, and web administration.",

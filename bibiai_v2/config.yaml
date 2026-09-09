@@ -1,5 +1,5 @@
 name: BibiAI v2
-version: "2.0.5"
+version: "2.0.6"
 slug: bibiai_v2
 description: A fresh BibiAI with private web administration, bounded NAS memory, Discord roles, and Home Assistant Assist.
 arch:

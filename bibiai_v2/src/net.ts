@@ -25,6 +25,7 @@ export class Gate {
   get busy() { return this.running; }
 }
 export function cleanError(e: unknown): string {
+  if (e instanceof Error && /HTTP 429/.test(e.message)) return 'BibiAI is cooling down after too many Gemini requests. Try again in about a minute.';
   if (e instanceof Error && /privacy|consent|busy|NAS|configured|enabled|allow|confirm|limit|role|permission|request|storage|volume|timeout|HTTP|Time|Invalid|Choose|Connection|configured|failed|connect|Unavailable|token|Key/i.test(e.message)) return e.message.slice(0, 250);
   return 'The operation failed. Check the connection and settings.';
 }

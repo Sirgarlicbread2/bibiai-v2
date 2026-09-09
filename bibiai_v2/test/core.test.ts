@@ -12,6 +12,7 @@ import { businessDeadline } from '../src/appeals.js';
 import { classify } from '../src/moderation.js';
 import { AI } from '../src/ai.js';
 import { commands } from '../src/commands.js';
+import { cleanError } from '../src/net.js';
 const paths:string[]=[];
 async function fixture(){
   const dir=await mkdtemp(join(tmpdir(),'bibi-v2-test-'));paths.push(dir);
@@ -48,6 +49,7 @@ describe('permission boundaries',()=>{
   it('requires configured channels and a privacy role to enable Discord',async()=>{const f=await fixture();const next=structuredClone(f.cfg.value);next.discord.enabled=true;await expect(f.cfg.save(next)).rejects.toThrow('privacy role');});
   it('contains no fabrication settings or keys',()=>{const cfg=new Configuration();expect('fabrication'in cfg.value).toBe(false);expect(Object.keys(cfg.secrets).some(k=>/fabrication|detector/.test(k))).toBe(false);});
   it('provides operators a privacy restore command',()=>{const privacy=commands.find((command:any)=>command.name==='privacy') as any;expect(privacy.options.some((option:any)=>option.name==='restore'&&option.options[0].name==='user')).toBe(true);});
+  it('turns Gemini rate limits into a useful response',()=>{expect(cleanError(new Error('Remote service returned HTTP 429.'))).toContain('cooling down');});
 });
 describe('AI privacy races',()=>{
   it('does not call the AI for an excluded actor',async()=>{const f=await fixture();const ai=new AI(f.cfg,f.memory,{} as any,{} as any);const generate=vi.spyOn(ai,'generate');await expect(ai.chat('hello',{id:'alice',source:'discord',operator:false,authorize:async()=>false})).rejects.toThrow('Privacy');expect(generate).not.toHaveBeenCalled();});

@@ -29,3 +29,7 @@
 # 2.0.5
 
 - Add an operator-only privacy restore command to remove a member's privacy role and resume empty-history processing.
+
+# 2.0.6
+
+- Avoid enabling Google Search grounding for casual chat and give Gemini rate limits a short, clear cooldown response.
